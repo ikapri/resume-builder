@@ -2,7 +2,7 @@ __author__ = 'ishaan'
 
 from jinja2 import Template
 from templates import *
-
+import os
 
 class GroupedField(object):
     """
@@ -112,6 +112,8 @@ if __name__ == '__main__':
         continue
     t = Template(template)
     file_name = name + ext
+    if not os.path.exists('resume'):
+        os.mkdir('resume')	
     with open('resume/' + file_name, 'w') as f:
         f.write(t.render(resume=r))
     print '\nFile saved as {name} in resume folder'.format(name=file_name)
