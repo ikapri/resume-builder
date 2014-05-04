@@ -5,14 +5,32 @@ from templates import *
 
 
 class GroupedField(object):
+    """
+    Represents a Section like Work Experience , which can have multiple entries of the same fields
+    """
     def __init__(self, group, fields, required=False):
+        """
+        Args -
+        group - Section under which fields will be grouped - ex:Education
+        fields - Fields which combine to make a single entry in the group
+        required - If specified , then atleast one entry should be present in the group
+        """
         self.group = group
         self.fields = [Field(**f) for f in fields]
         self.required = required
 
 
 class Field(object):
+    """
+    Represents a Single field in the Resume
+    """
     def __init__(self, text, required=False, default=None):
+        """
+        Args -
+        text - Name of the field
+        required fields cannot be left blank
+        default  - If a field is left blank and default is specified , then default value is used
+        """
         self.text = text
         self.default = default
         self.required = required
@@ -23,6 +41,9 @@ class Input(object):
         self.field = field
 
     def take_input(self):
+        """
+        Takes Input from the User according to field type and Field constraints
+        """
         if isinstance(self.field, Field):
             return Input.single_field_input(self.field)
         elif isinstance(self.field, GroupedField):
@@ -74,7 +95,23 @@ class Resume(object):
         self.skills = Input(Field('SKILLS')).take_input()
 
 
-r = Resume()
-t = Template(TXT_TEMPLATE)
-with open('cv.txt', 'w') as f:
-    f.write(t.render(resume=r))
+if __name__ == '__main__':
+    r = Resume()
+    name = r.name.strip()
+    while True:
+        opt = raw_input('EXPORT TO \n1:PLAIN TEXT\n2:CSV\n')
+        if opt == '1':
+            template = TXT_TEMPLATE
+            ext = '.txt'
+            break
+        elif opt == '2':
+            template = CSV_TEMPLATE
+            ext = '.csv'
+            break
+        print "Wrong Option..Try Again"
+        continue
+    t = Template(template)
+    file_name = name + ext
+    with open('resume/' + file_name, 'w') as f:
+        f.write(t.render(resume=r))
+    print '\nFile saved as {name} in resume folder'.format(name=file_name)
